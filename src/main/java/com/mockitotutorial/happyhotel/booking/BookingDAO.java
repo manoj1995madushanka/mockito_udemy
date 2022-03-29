@@ -4,7 +4,7 @@ import java.util.*;
 
 public class BookingDAO {
 
-	private final Map<String, BookingRequest> bookings = new HashMap<>();
+	private final Map<String, BookingRequest> bookings = new HashMap();
 
 	public String save(BookingRequest bookingRequest) {
 		String id = UUID.randomUUID().toString();
