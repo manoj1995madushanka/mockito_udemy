@@ -24,6 +24,10 @@ class BookingServiceTest {
         this.mailSender = mock(MailSender.class);
 
         this.bookingService = new BookingService(paymentService, roomService, bookingDAO, mailSender);
+
+        System.out.println("List returned " + roomService.getAvailableRooms());
+        System.out.println("Object returned " + roomService.findAvailableRoomId(null));
+        System.out.println("Primitive returned " + roomService.getRoomCount());
     }
 
     @Test
@@ -40,5 +44,15 @@ class BookingServiceTest {
         //then
         assertEquals(expected,actual);
     }
+
+    @Test
+    void should_countAvailable_places(){
+        int expected=0;
+        int actual = bookingService.getAvailablePlaceCount();
+
+        assertEquals(expected,actual);
+    }
+
+
 
 }
