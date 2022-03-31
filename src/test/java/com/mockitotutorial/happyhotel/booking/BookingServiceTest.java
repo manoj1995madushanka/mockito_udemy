@@ -26,7 +26,7 @@ class BookingServiceTest {
     void setup() {
         this.paymentService = mock(PaymentService.class);
         this.roomService = mock(RoomService.class);
-        this.bookingDAO = mock(BookingDAO.class);
+        this.bookingDAO = spy(BookingDAO.class);
         this.mailSender = mock(MailSender.class);
 
         this.bookingService = new BookingService(paymentService, roomService, bookingDAO, mailSender);
@@ -164,7 +164,22 @@ class BookingServiceTest {
         System.out.println("booking Id = " + bookingId);
     }
 
+    @Test
+    void should_cancel_booking_when_input_ok() {
+        BookingRequest bookingRequest = new BookingRequest("1",
+                LocalDate.of(2020, 05, 01), LocalDate.of(2020, 05, 03),
+                2, true);
+        bookingRequest.setRoomId("1.3");
+        String bookingId = "1";
 
+        // mocks : when(mock.method()).thenReturn()
+        // spies : doReturn().when(spy).method()
+
+        doReturn(bookingRequest).when(bookingDAO).get(bookingId);
+
+
+        bookingService.cancelBooking(bookingId);
+    }
 
 
 }
