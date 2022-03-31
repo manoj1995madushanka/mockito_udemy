@@ -2,8 +2,10 @@ package com.mockitotutorial.happyhotel.booking;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentCaptor;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -15,12 +17,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
 
+// this annotation needs to initialize annotated mocks
+@ExtendWith(MockitoExtension.class)
+// junit 5 uses extendWith and junit 4 uses runWith
 class BookingServiceTest {
 
+    @InjectMocks
     private BookingService bookingService;
+    @Mock
     private PaymentService paymentService;
+    @Mock
     private RoomService roomService;
+    @Spy
     private BookingDAO bookingDAO;
+    @Mock
     private MailSender mailSender;
 
     // argument captors
@@ -29,10 +39,11 @@ class BookingServiceTest {
 
     @BeforeEach
     void setup() {
-        this.paymentService = mock(PaymentService.class);
+        // below code was replaced with annotations
+        /*this.paymentService = mock(PaymentService.class);
         this.roomService = mock(RoomService.class);
         this.bookingDAO = spy(BookingDAO.class);
-        this.mailSender = mock(MailSender.class);
+        this.mailSender = mock(MailSender.class);*/
 
         this.bookingService = new BookingService(paymentService, roomService, bookingDAO, mailSender);
 
