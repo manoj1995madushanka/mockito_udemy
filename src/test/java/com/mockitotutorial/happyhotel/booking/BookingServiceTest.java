@@ -3,6 +3,7 @@ package com.mockitotutorial.happyhotel.booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -22,6 +23,10 @@ class BookingServiceTest {
     private BookingDAO bookingDAO;
     private MailSender mailSender;
 
+    // argument captors
+    private ArgumentCaptor<Double> doubleCaptor;
+    private ArgumentCaptor<BookingRequest> bookingRequestCaptor;
+
     @BeforeEach
     void setup() {
         this.paymentService = mock(PaymentService.class);
@@ -34,6 +39,8 @@ class BookingServiceTest {
         System.out.println("List returned " + roomService.getAvailableRooms());
         System.out.println("Object returned " + roomService.findAvailableRoomId(null));
         System.out.println("Primitive returned " + roomService.getRoomCount());
+
+        this.doubleCaptor = ArgumentCaptor.forClass(Double.class);
     }
 
     @Test
@@ -207,6 +214,45 @@ class BookingServiceTest {
         doNothing().when(mailSender).sendBookingConfirmation(any());
 
         bookingService.makeBooking(bookingRequest);
+    }
+
+    @Test
+    void should_correct_price_when_input_ok() {
+        BookingRequest bookingRequest = new BookingRequest("1",
+                LocalDate.of(2020, 05, 01), LocalDate.of(2020, 05, 03),
+                2, true);
+
+        bookingService.makeBooking(bookingRequest);
+
+        verify(paymentService, times(1)).pay(eq(bookingRequest), doubleCaptor.capture());
+        double capturedArgument = doubleCaptor.getValue();
+
+        assertEquals(400.0, capturedArgument);
+
+    }
+
+    @Test
+    void should_correct_price_when_multiple_input() {
+        BookingRequest bookingRequest1 = new BookingRequest("1",
+                LocalDate.of(2020, 05, 01),
+                LocalDate.of(2020, 05, 03),
+                2, true);
+
+        BookingRequest bookingRequest2 = new BookingRequest("1",
+                LocalDate.of(2020, 05, 01),
+                LocalDate.of(2020, 05, 02),
+                2, true);
+
+        List<Double> expectedValues = Arrays.asList(400.0, 100.0);
+
+        bookingService.makeBooking(bookingRequest1);
+        bookingService.makeBooking(bookingRequest2);
+
+        verify(paymentService, times(2)).pay(any(), doubleCaptor.capture());
+        List<Double> capturedArguments = doubleCaptor.getAllValues();
+
+        assertEquals(expectedValues, capturedArguments);
+
     }
 
 
