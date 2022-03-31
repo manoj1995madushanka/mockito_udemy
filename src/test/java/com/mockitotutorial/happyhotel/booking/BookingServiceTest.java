@@ -148,5 +148,23 @@ class BookingServiceTest {
         verify(paymentService, never()).pay(any(), anyDouble());
     }
 
+    @Test
+    void should_make_booking_when_input_ok() {
+        BookingRequest bookingRequest = new BookingRequest("1",
+                LocalDate.of(2020, 05, 01), LocalDate.of(2020, 05, 03),
+                2, true);
+
+        String bookingId = bookingService.makeBooking(bookingRequest);
+
+        verify(bookingDAO).save(bookingRequest);
+        // when we use mock bookingService booking id will be null
+        // when we use spy bookingService booking id will be random value
+        // mock = dummy object with no real values
+        // spy = real object with real logic that we can modify
+        System.out.println("booking Id = " + bookingId);
+    }
+
+
+
 
 }
