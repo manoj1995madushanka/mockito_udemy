@@ -182,4 +182,32 @@ class BookingServiceTest {
     }
 
 
+    //mock void method
+    @Test
+    void should_throw_exception_when_no_room_available_mock_void() {
+        BookingRequest bookingRequest = new BookingRequest("1",
+                LocalDate.of(2020, 05, 01), LocalDate.of(2020, 05, 03),
+                2, false);
+
+        // this is void method
+        doThrow(BusinessException.class).when(mailSender).sendBookingConfirmation(any());
+
+        Executable executable = () -> bookingService.makeBooking(bookingRequest);
+
+        assertThrows(BusinessException.class, executable);
+    }
+
+    @Test
+    void should_not_throw_exception_when_mail_not_ready() {
+        BookingRequest bookingRequest = new BookingRequest("1",
+                LocalDate.of(2020, 05, 01), LocalDate.of(2020, 05, 03),
+                2, false);
+
+        // this is void method
+        doNothing().when(mailSender).sendBookingConfirmation(any());
+
+        bookingService.makeBooking(bookingRequest);
+    }
+
+
 }
